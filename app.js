@@ -1,10 +1,19 @@
+/*****************IGNORE*****************/
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var admin = require('firebase-admin');
+/***************************************/
+require("dotenv").config(); // allows us to use dotenv
+//intializes firebase with the database secrets
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+  databaseURL: 'https://divhacks2020-aca2a.firebaseio.com'
+});
 
-var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/index')(admin);
 var usersRouter = require('./routes/users');
 
 var app = express();
@@ -19,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/', indexRouter); //attaches the routers to the firebase
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
